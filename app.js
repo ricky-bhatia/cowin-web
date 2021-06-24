@@ -134,7 +134,10 @@
                 filters.selected_bens.push(option.value);
             }
         }
-        if (filters.selected_bens){
+        if (!filters.selected_bens.length){
+            alert("Please select one or more beneficiaries.");
+        }
+        else{
             bookingInProgress = true;
             startTracking();
             $("#stopBookingBtn").removeClass('d-none');
