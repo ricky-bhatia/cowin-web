@@ -144,15 +144,18 @@
     function stopBooking(){
         var stop_process = confirm("Are you sure you want to stop the booking process?");
         if (stop_process){
-            bookingInProgress = false;
-            stopTracking();
-            $("#stopBookingBtn").addClass('d-none');
-            $("#startBookingBtn").removeClass('d-none');
-            $('#beneficiariesList').removeAttr('required');
-            $('#startBookingBtn').attr('disabled','disabled');
+            resetBooking();
         }
     }
-    
+    function resetBooking(){
+        bookingInProgress = false;
+        stopTracking();
+        $("#stopBookingBtn").addClass('d-none');
+        $("#startBookingBtn").removeClass('d-none');
+        $('#beneficiariesList').removeAttr('required');
+        $('#startBookingBtn').attr('disabled','disabled');
+    }
+
     function startTracking(){
         if (document.getElementById("districtList").value){
             filters.dist_id     = document.getElementById("districtList").value;
@@ -180,7 +183,7 @@
     }
     function notifyTokenTimeout(){
         alert("Session timed-out before any suitable centers were found. Restart the process by sending OTP.");
-        stopTracking();
+        resetBooking();
     }
     function notifyOTPTimeout(){
         alert("OTP validity expired. You will need to send OTP again.");
@@ -188,17 +191,18 @@
     }
     
     function findByDistrict(){
-        var addDay = (new Date().getHours() >= 14 ? 1 : 0)
+        var addDay = (new Date().getHours() >= 12 ? 1 : 0)
         const date = moment(new Date()).add(addDay,'d').format("DD-MM-YYYY");
         var centerCnt = 0;
         var autoBooking = document.getElementById("enableBooking").checked;
-        document.getElementById("centersRows").innerHTML = "";
+        
         $.ajax({
             type: "GET",
             url: "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/findByDistrict?district_id=" + filters.dist_id + "&date=" + date,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function (data) {
+                document.getElementById("centersRows").innerHTML = "";
                 $.each(data.sessions, function () {
                     if ((eval('this.available_capacity_dose'+filters.dose+' > 0') && this.min_age_limit == filters.age_group)
                         && (filters.vaccine=="ANY" || this.vaccine.toUpperCase()==filters.vaccine)
@@ -219,6 +223,7 @@
                 document.getElementById("mainAlert").innerHTML = "Total centers found: " + centerCnt;
                 $("#mainAlert").removeClass('d-none');
                 $("#mainAlert").addClass('alert-warning');
+                document.getElementById("mainAlert").scrollIntoView();
             }
         });
         
