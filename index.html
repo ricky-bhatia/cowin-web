@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Ricky Bhatia">
+    <title>CoWIN Vaccine Tracker</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/min/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/crypto-js@4.0.0/crypto-js.min.js"></script>
+    
+    
+
+    <style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+    </style>
+
+    
+    <!-- Custom styles for this template -->
+    <link href="form-validation.css" rel="stylesheet">
+  </head>
+  <body class="bg-light">
+    
+<div class="container-fluid">
+  <main>
+    <div class="py-5 text-center">
+      <i class="bi-bootstrap" style="font-size: 2rem; color: blue;"></i>
+      <h2>CoWIN Vaccine Tracker</h2>
+      <p class="lead">A clean and simple CoWIN vaccine tracker that shows available vaccine counts in your area. You can also book the appointment directly using the booking scheduler.</p>
+    </div>
+
+    <div class="row g-5">
+
+      <div class="col-fluid">
+        <h4 class="mb-3">Tracker</h4>
+        <p>Choose the options from below and click <strong>Start Tracking</strong>.
+        <ol class="list-style">
+          <li>You can enter multiple pincodes in <strong>Pincodes</strong> field (separated by comma) to filter the centers.</li>
+          <li>You can use the <strong>Centers</strong> field to look for specific centers.</li>
+        </ol></p>
+        <form class="needs-validation" novalidate>
+          <div class="row g-3">
+
+            <div class="col-md-6">
+              <label for="stateList" class="form-label">State</label>
+              <select class="form-select" id="stateList" onchange="getDistricts()" required>
+              </select>
+              <div class="invalid-feedback">
+                Please provide a valid state.
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label for="districtList" class="form-label">District</label>
+              <select class="form-select" id="districtList" required>
+              </select>
+              <div class="invalid-feedback">
+                Please provide a valid district.
+              </div>
+            </div>
+            
+            <div class="col-12">
+              <label for="pincodeList" class="form-label">Pincodes <span class="text-muted">(Optional. Enter list of pincodes separated by comma)</label>
+              <input type="text" class="form-control" id="pincodeList" placeholder="" value="">
+            </div>
+            
+            
+            <div class="col-md-3">
+              <label for="ageList" class="form-label">Age</label>
+              <select class="form-select" id="ageList" required>
+                <option value="18">18+</option>
+                <option value="30">30+</option>
+                <option value="45">45+</option>
+              </select>
+              <div class="invalid-feedback">
+                Please provide a valid age group.
+              </div>
+            </div>
+            <div class="col-md-3">
+              <label for="vaccineList" class="form-label">Vaccine</label>
+              <select class="form-select" id="vaccineList" required>
+                <option value="ANY" selected>Any</option>
+                <option value="COVISHIELD">COVISHIELD</option>
+                <option value="COVAXIN">COVAXIN</option>
+                <option value="SPUTNIK V">SPUTNIK V</option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <label for="feeList" class="form-label">Fee Type</label>
+              <select class="form-select" id="feeList" required>
+                <option value="ANY">Any</option>
+                <option value="FREE">Free</option>
+                <option value="PAID">Paid</option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <label for="doseList" class="form-label">Dose</label>
+              <select class="form-select" id="doseList" required>
+                <option value="1">Dose 1</option>
+                <option value="2">Dose 2</option>
+              </select>
+            </div>
+            
+            <div class="d-grid gap-2 col-12 mx-auto">
+              <button type="button" id="startTrackingBtn" class="btn btn-primary" onclick="startTracking()">Start Tracking</button>
+              <button type="button" id="stopTrackingBtn" class="btn btn-danger d-none" onclick="stopTracking()">Stop Tracking</button>
+            </div>
+          </div>
+        </form>
+
+            <hr class="my-4">
+            <h4 class="mb-3">Booking Scheduler</h4>
+            <div class="form-check mb-3">
+              <input class="form-check-input" type="checkbox" value="" id="enableBooking">
+              <label class="form-check-label" for="enableBooking">Enable Booking Scheduler</label>
+            </div>
+            <div id="sendOTPdiv" class="input-group mb-3">
+              <input type="text" class="form-control" id="mobileNumber" placeholder="Mobile Number" aria-label="Mobile Number" aria-describedby="button-addon1">
+              <button class="btn btn-outline-secondary" type="button" onclick="sendOTP()" id="button-addon1">Send OTP</button>
+            </div>
+            
+            <div id="verifyOTPdiv" class="input-group mb-3 d-none">
+              <input type="text" class="form-control" id="otp" placeholder="Enter OTP" aria-label="Enter OTP" aria-describedby="button-addon2">
+              <button class="btn btn-outline-secondary" type="button" onclick="verifyOTP()" id="button-addon2">Verify OTP</button>
+            </div>
+            
+            <div id="benListdiv" class="mb-3 d-none">
+              <label for="beneficiariesList" class="form-label">Beneficiaries <span class="text-muted">(You can select multiple beneficiaries, but ensure they are in same age group)</span></label>
+              <select class="form-select" id="beneficiariesList" multiple>
+              </select>
+              <div class="invalid-feedback">
+                Please select at least one beneficiary.
+              </div>
+            </div>
+            
+            <div class="d-grid gap-2 col-12 mx-auto">
+              <button type="button" id="startBookingBtn" class="btn btn-primary" disabled onclick="startBooking()">Start Booking</button>
+              <button type="button" id="stopBookingBtn" class="btn btn-danger d-none" onclick="stopBooking()">Stop Booking</button>
+            </div>
+        </form>
+        <br/>
+        <div id="mainAlert" class="alert fade show d-none" role="alert">
+        </div>
+        <!--<div class="col-md-12">
+            <ul class="list-group" id="centersList">
+            </ul>
+        </div>-->
+        <table class="table table-sm">
+          <caption>List of centers</caption>
+          <thead>
+            <tr>
+              <th scope="col">Pincode</th>
+              <th scope="col">Center</th>
+              <th scope="col">Capacity</th>
+            </tr>
+          </thead>
+          <tbody id="centersRows">
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <footer class="my-5 pt-5 text-muted text-center text-small">
+    <p class="mb-1">&copy; 2021 Ricky Bhatia</p>
+    <ul class="list-inline">
+      <li class="list-inline-item"><a href="#">Privacy</a></li>
+      <li class="list-inline-item"><a href="#">Terms</a></li>
+      <li class="list-inline-item"><a href="#">Support</a></li>
+    </ul>
+  </footer>
+</div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="form-validation.js"></script>
+    <script src="app.js"></script>
+    
+  </body>
+
+</html>
