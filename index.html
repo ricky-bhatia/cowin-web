@@ -87,16 +87,22 @@
             </div>
             
             <div class="col-12">
-              <label for="pincodeList" class="form-label">Pincodes <span class="text-muted">(Optional. Enter list of pincodes separated by comma)</label>
+              <label for="pincodeList" class="form-label">Pincodes <span class="text-muted"><small>(Optional. Enter list of pincodes separated by comma)</small></label>
               <input type="text" class="form-control" id="pincodeList" placeholder="" value="">
             </div>
-            
+            <div class="col-12">
+              <label for="centerNameList" class="form-label">Center Names <span class="text-muted"><small>(Optional. If you are looking for specific centers, then enter name here. You need not enter complete center name, just one main word is sufficient (ensure spelling is correct). You can also enter multiple center names separated by comma. Eg. apollo,reliance)</small></label>
+              <input type="text" class="form-control" id="centerNameList" placeholder="" value="">
+            </div>
+            <div class="col-12">
+              <label for="addressList" class="form-label">Place/Location Keywords <span class="text-muted"><small>(Optional. You can enter location keywords to filter centers in that area. These words are searched in <strong>center address</strong>, so ensure that the words are part of the address. Eg. borivali,malad)</small></label>
+              <input type="text" class="form-control" id="addressList" placeholder="" value="">
+            </div>
             
             <div class="col-md-3">
               <label for="ageList" class="form-label">Age</label>
               <select class="form-select" id="ageList" required>
                 <option value="18">18+</option>
-                <option value="30">30+</option>
                 <option value="45">45+</option>
               </select>
               <div class="invalid-feedback">
