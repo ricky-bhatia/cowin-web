@@ -6,7 +6,6 @@
     var tokenTimeout;
     const filters={};
     
-    
     function getDistricts(){
         var state_id = document.getElementById("stateList").value;
         if (state_id){
@@ -21,7 +20,6 @@
                         var options = "<option " + "value='" + this.district_id + "'>" + this.district_name + "";
                         $("#districtList").append(options);
                     });
-                    //$('#districtList').selectpicker('refresh');
                 }
             });
         }
@@ -42,11 +40,15 @@
                 alert("OTP sent on mobile. It will be valid only for 3 minutes.");
                 $("#sendOTPdiv").addClass('d-none');
                 $("#verifyOTPdiv").removeClass('d-none');
+            },
+            error: function (jqxhr, status, error) {
+                if (jqxhr.status == 400) {
+                    response = JSON.parse(jqxhr.responseText)
+                    alert(response.error);
+                }
             }
         });
-        //otpTimeout = setTimeout(stopTracking, 1000*60*3);
     }
-    
     
     function verifyOTP(){
         var otp = document.getElementById("otp").value;
@@ -74,8 +76,8 @@
                 }
             }
         });
-        
     }
+
     function getBeneficiaries(){
         $.ajax({
             type: "GET",
@@ -111,12 +113,17 @@
             dataType: "json",
             success: function (data) {
                 alert("Appointment booked successfully.");
-                stopBooking();
+                resetBooking();
             },
             error: function (jqxhr, status, error) {
                 if (jqxhr.status == 400) {
                     response = JSON.parse(jqxhr.responseText)
                     alert(response.error);
+                    resetBooking();
+                }
+                else if (jqxhr.status == 409) {
+                    response = JSON.parse(jqxhr.responseText)
+                    console.log(response.error);
                 }
             }
         });
@@ -170,11 +177,20 @@
             if (document.getElementById("pincodeList").value.trim()){
                 filters.pincodes    = document.getElementById("pincodeList").value.split(",").map(e => e.trim());
             }
+            filters.center_name = new RegExp('.*','gi');
+            if (document.getElementById("centerNameList").value.trim()){
+                filters.center_name = new RegExp('('+document.getElementById("centerNameList").value.split(",").map(e => e.trim()).join('|')+')','gi');
+            }
+            filters.center_addr = new RegExp('.*','gi');
+            if (document.getElementById("addressList").value.trim()){
+                filters.center_addr = new RegExp('('+document.getElementById("addressList").value.split(",").map(e => e.trim()).join('|')+')','gi');
+            }
             timer = setInterval(findByDistrict, 10*1000);
             if (!bookingInProgress){
                 $("#stopTrackingBtn").removeClass('d-none');
             }
             $("#startTrackingBtn").addClass('d-none');
+            findByDistrict();
         }
     }
     function stopTracking(){
@@ -198,7 +214,7 @@
         const date = moment(new Date()).add(addDay,'d').format("DD-MM-YYYY");
         var centerCnt = 0;
         var autoBooking = document.getElementById("enableBooking").checked;
-        
+        const centerList = []
         $.ajax({
             type: "GET",
             url: "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/findByDistrict?district_id=" + filters.dist_id + "&date=" + date,
@@ -211,6 +227,8 @@
                         && (filters.vaccine=="ANY" || this.vaccine.toUpperCase()==filters.vaccine)
                         && (filters.fee_type=="ANY" || this.fee_type.toUpperCase()==filters.fee_type)
                         && (!filters.pincodes.length || filters.pincodes.includes(this.pincode.toString()))
+                        && (this.name.match(filters.center_name))
+                        && (this.address.match(filters.center_addr))
                        ){
                         if (autoBooking && bookingInProgress){
                             bookAppointment(this.center_id, this.session_id, this.slots.pop());
@@ -218,10 +236,15 @@
                         eval('var valueToPrint = this.name+", "+this.available_capacity_dose'+filters.dose)
                         //var center = "<li class='list-group-item'>"+valueToPrint+"</li>"
                         //$("#centersList").append(center);
-                        var center = "<tr><td>"+this.pincode+"</td><td>"+this.name+"</td><td>"+eval('this.available_capacity_dose'+filters.dose)+"</td></tr>"
-                        $("#centersRows").append(center);
+                        var center = "<tr><td>"+this.pincode+"</td><td>"+this.name+"</td><td>"+eval('this.available_capacity_dose'+filters.dose)+"</td></tr>";
+                        //$("#centersRows").append(center);
+                        centerList.push(center);
                         centerCnt += 1;
                     }
+                });
+                centerList.sort();
+                $.each(centerList,function() {
+                    $("#centersRows").append(this);
                 });
                 document.getElementById("mainAlert").innerHTML = "<h6>Total centers found for <strong>"+date+"</strong>: " + centerCnt+"</h6><hr><p class='mb-0'><small>Last refreshed at "+moment(new Date()).format("DD-MM-YYYY HH:mm:ss")+"<small></p>";
                 $("#mainAlert").removeClass('d-none');
@@ -244,6 +267,5 @@
                 var options = "<option " + "value='" + this.state_id + "'>" + this.state_name + "";
                 $("#stateList").append(options);
             });
-            //$('#selectState').selectpicker('refresh');
         }
     });
