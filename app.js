@@ -170,7 +170,7 @@
             if (document.getElementById("pincodeList").value.trim()){
                 filters.pincodes    = document.getElementById("pincodeList").value.split(",").map(e => e.trim());
             }
-            timer = setInterval(findByDistrict, 6000);
+            timer = setInterval(findByDistrict, 10*1000);
             if (!bookingInProgress){
                 $("#stopTrackingBtn").removeClass('d-none');
             }
@@ -223,7 +223,7 @@
                         centerCnt += 1;
                     }
                 });
-                document.getElementById("mainAlert").innerHTML = "Total centers found: " + centerCnt;
+                document.getElementById("mainAlert").innerHTML = "<h6>Total centers found for <strong>"+date+"</strong>: " + centerCnt+"</h6><hr><p class='mb-0'><small>Last refreshed at "+moment(new Date()).format("DD-MM-YYYY HH:mm:ss")+"<small></p>";
                 $("#mainAlert").removeClass('d-none');
                 $("#mainAlert").addClass('alert-warning');
                 document.getElementById("mainAlert").scrollIntoView();
