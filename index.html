@@ -7,6 +7,10 @@
     <meta name="author" content="Ricky Bhatia">
     <title>CoWIN Vaccine Tracker</title>
     
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/img/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/img/favicon-16x16.png">
+    <link rel="manifest" href="assets/img/site.webmanifest">
     <meta property="og:url" content="https://co-win.herokuapp.com/">
     <meta property="og:title" content="CoWIN Vaccine Tracker">
     <meta property="og:description" content="A clean and simple real-time vaccine tracker and appointment booking scheduler.">
@@ -52,7 +56,7 @@
 <div class="container-fluid">
   <main>
     <div class="py-5 text-center">
-      <i class="bi-bootstrap" style="font-size: 2rem; color: blue;"></i>
+      <i class="bi bi-patch-plus-fill" style="font-size: 2rem; color: blue;"></i>
       <h2>CoWIN Vaccine Tracker</h2>
       <p class="lead">A clean and simple CoWIN vaccine tracker that shows available vaccine counts in your area. You can also book the appointment directly using the booking scheduler.</p>
     </div>
@@ -60,12 +64,8 @@
     <div class="row g-5">
 
       <div class="col-fluid">
-        <h4 class="mb-3">Tracker</h4>
-        <p>Choose the options from below and click <strong>Start Tracking</strong>.
-        <ol class="list-style">
-          <li>You can enter multiple pincodes in <strong>Pincodes</strong> field (separated by comma) to filter the centers.</li>
-          <li>You can use the <strong>Centers</strong> field to look for specific centers.</li>
-        </ol></p>
+        <h4>Tracker</h4>
+        <p><small>Choose the options from below form and click <strong>Start Tracking</strong>. The web page will search for centers every <strong>10</strong> seconds and list the centers with available vaccines.</small></p>
         <form class="needs-validation" novalidate>
           <div class="row g-3">
 
@@ -135,8 +135,10 @@
           </div>
         </form>
 
-            <hr class="my-4">
-            <h4 class="mb-3">Booking Scheduler</h4>
+        <hr class="my-4">
+        <form class="needs-validation" novalidate>
+            <h4>Booking Scheduler</h4>
+            <p><small>This can help you book the vaccination appointment automatically. You'll need to login here, select the beneficiaries, and desired options using the above form. The app will then look for appropriate centers (based on your choice of options above) for upto 15 minutes, and if it finds a suitable center then automatically book an appointment for you. If no center is found in the 15 minute window, the process will time out and you will need to login again and repeat the steps.</small></p>
             <div class="form-check mb-3">
               <input class="form-check-input" type="checkbox" value="" id="enableBooking">
               <label class="form-check-label" for="enableBooking">Enable Booking Scheduler</label>
@@ -191,13 +193,31 @@
   <footer class="my-5 pt-5 text-muted text-center text-small">
     <p class="mb-1">&copy; 2021 Ricky Bhatia</p>
     <img src="https://hitcounter.pythonanywhere.com/count/tag.svg?url=https%3A%2F%2Fco-win.herokuapp.com%2F" alt="Hits">
-    <ul class="list-inline">
-      <li class="list-inline-item"><a href="#">Privacy</a></li>
-      <li class="list-inline-item"><a href="#">Terms</a></li>
-      <li class="list-inline-item"><a href="#">Support</a></li>
-    </ul>
+    <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+      <button type="button" class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#privacyModal">Privacy</button>
+      <a role="button" href="https://forms.gle/WJD1ESv3agoYFzEz5" class="btn btn-outline-secondary btn-sm">Feedback</a>
+      <button type="button" class="btn btn-secondary btn-sm">Support</button>
+    </div>
   </footer>
-</div>
+  <div class="modal fade" id="privacyModal" tabindex="-1" aria-labelledby="privacyModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Privacy</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <h6>Information Collection</h6>
+            <p><small>While using this site, none of the data provided by you is actually stored on the server or collected for any other purposes. All communication or information exchange is done directly with CoWIN APIs and requested information is displayed.</small></p>
+            <h6>Log Data</h6>
+            <p><small>None of user information is being knowingly logged by the code.</small></p>
+            <h6>Cookies</h6>
+            <p><small>There might be 1 cookie being used purely to keep a count of users visiting the site. This is only there to help me get some stats of usage of the site.</small></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"></script>
