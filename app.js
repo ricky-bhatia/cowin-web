@@ -2,8 +2,10 @@
     var token;
     var timer;
     var bookingInProgress=false;
+    var trackingInProgress=false;
     var otpTimeout;
     var tokenTimeout;
+    var bookingRetryCnt = 3;
     const filters={};
     
     function getDistricts(){
@@ -98,31 +100,33 @@
             }
         });
     }
-    function bookAppointment(center_id, session_id, slot_time){
+    //function bookAppointment(center_id, session_id, slot_time){
+    function bookAppointment(center){
         $.ajax({
             type: "POST",
             url: "https://cdn-api.co-vin.in/api/v2/appointment/schedule",
             data: JSON.stringify({
-                center_id     : center_id,
-                session_id    : session_id,
+                center_id     : center.center_id,
+                session_id    : center.session_id,
                 beneficiaries : filters.selected_bens,
-                slot          : slot_time,
+                slot          : center.slots.pop(),
                 dose          : filters.dose}),
             headers: {"Authorization": "Bearer "+token},
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function (data) {
-                alert("Appointment booked successfully.");
+                console.log("Appointment booked successfully.");
+                alert("Appointment booked successfully at below center!\n"+center.name+"\nVaccine: "+center.vaccine+"\nFee Type: "+center.fee_type+"\n\nLogin on CoWIN site to verify and download your appointment slip.");
                 resetBooking();
             },
             error: function (jqxhr, status, error) {
                 if (jqxhr.status == 400) {
-                    response = JSON.parse(jqxhr.responseText)
-                    alert(response.error);
+                    response = JSON.parse(jqxhr.responseText);
+                    alert("Error on trying to book appointment:\n\n"+response.error);
                     resetBooking();
                 }
                 else if (jqxhr.status == 409) {
-                    response = JSON.parse(jqxhr.responseText)
+                    response = JSON.parse(jqxhr.responseText);
                     console.log(response.error);
                 }
             }
@@ -135,20 +139,30 @@
     }
     function startBooking(){
         filters.selected_bens = [];
-        for (var option of document.getElementById('beneficiariesList').options)
-        {
-            if (option.selected) {
-                filters.selected_bens.push(option.value);
+        var autoBooking = document.getElementById("enableBooking").checked;
+        if (autoBooking){
+            for (var option of document.getElementById('beneficiariesList').options)
+            {
+                if (option.selected) {
+                    filters.selected_bens.push(option.value);
+                }
+            }
+            if (!filters.selected_bens.length){
+                alert("Please select one or more beneficiaries.");
+            }
+            else if (document.getElementById("districtList").value){
+                bookingInProgress = true;
+                bookingRetryCnt = 3;
+                startTracking();
+                $("#stopBookingBtn").removeClass('d-none');
+                $("#startBookingBtn").addClass('d-none');
+            }
+            else{
+                alert("Please select appropriate options before proceeding with booking.");
             }
         }
-        if (!filters.selected_bens.length){
-            alert("Please select one or more beneficiaries.");
-        }
         else{
-            bookingInProgress = true;
-            startTracking();
-            $("#stopBookingBtn").removeClass('d-none');
-            $("#startBookingBtn").addClass('d-none');
+            alert("Please turn on Enable Booking Scheduler option");
         }
     }
     function stopBooking(){
@@ -165,31 +179,41 @@
         $('#beneficiariesList').removeAttr('required');
         $('#startBookingBtn').attr('disabled','disabled');
     }
-
+    function setupFilters(){
+        filters.dist_id     = document.getElementById("districtList").value;
+        filters.date        = moment(new Date(document.getElementById("datePicker").value)).format('DD-MM-YYYY');
+        filters.age_group   = document.getElementById("ageList").value;
+        filters.vaccine     = document.getElementById("vaccineList").value;
+        filters.fee_type    = document.getElementById("feeList").value;
+        filters.dose        = document.getElementById("doseList").value;
+        filters.pincodes    = [];
+        if (document.getElementById("pincodeList").value.trim()){
+            filters.pincodes    = document.getElementById("pincodeList").value.split(",").map(e => e.trim());
+        }
+        filters.center_name = new RegExp('.*','gi');
+        if (document.getElementById("centerNameList").value.trim()){
+            filters.center_name = new RegExp('('+document.getElementById("centerNameList").value.split(",").map(e => e.trim()).join('|')+')','gi');
+        }
+        filters.center_addr = new RegExp('.*','gi');
+        if (document.getElementById("addressList").value.trim()){
+            filters.center_addr = new RegExp('('+document.getElementById("addressList").value.split(",").map(e => e.trim()).join('|')+')','gi');
+        }
+    }
+    function findCenters(){
+        if (document.getElementById("districtList").value){
+            setupFilters();
+            findByDistrict();
+        }
+    }
     function startTracking(){
         if (document.getElementById("districtList").value){
-            filters.dist_id     = document.getElementById("districtList").value;
-            filters.age_group   = document.getElementById("ageList").value;
-            filters.vaccine     = document.getElementById("vaccineList").value;
-            filters.fee_type    = document.getElementById("feeList").value;
-            filters.dose        = document.getElementById("doseList").value;
-            filters.pincodes    = [];
-            if (document.getElementById("pincodeList").value.trim()){
-                filters.pincodes    = document.getElementById("pincodeList").value.split(",").map(e => e.trim());
-            }
-            filters.center_name = new RegExp('.*','gi');
-            if (document.getElementById("centerNameList").value.trim()){
-                filters.center_name = new RegExp('('+document.getElementById("centerNameList").value.split(",").map(e => e.trim()).join('|')+')','gi');
-            }
-            filters.center_addr = new RegExp('.*','gi');
-            if (document.getElementById("addressList").value.trim()){
-                filters.center_addr = new RegExp('('+document.getElementById("addressList").value.split(",").map(e => e.trim()).join('|')+')','gi');
-            }
+            setupFilters();
             timer = setInterval(findByDistrict, 10*1000);
             if (!bookingInProgress){
                 $("#stopTrackingBtn").removeClass('d-none');
             }
             $("#startTrackingBtn").addClass('d-none');
+            $('#searchOnceBtn').attr('disabled','disabled');
             findByDistrict();
         }
     }
@@ -199,6 +223,7 @@
         $("#stopTrackingBtn").addClass('d-none');
         $("#startTrackingBtn").removeClass('d-none');
         $("#benListdiv").addClass('d-none');
+        $('#searchOnceBtn').removeAttr('disabled');
     }
     function notifyTokenTimeout(){
         alert("Session timed-out before any suitable centers were found. Restart the process by sending OTP.");
@@ -209,15 +234,22 @@
         bookingDefault();
     }
     
+    function testThis(session){
+        alert("Appointment booked successfully at below center!\n"+session.name+"\nVaccine: "+session.vaccine+"\nFee Type: "+session.fee_type+"\n\nLogin on CoWIN site to verify and download your appointment slip.");
+        return true;
+    }
+    
     function findByDistrict(){
-        var addDay = (new Date().getHours() >= 12 ? 1 : 0)
-        const date = moment(new Date()).add(addDay,'d').format("DD-MM-YYYY");
+        //var addDay = (new Date().getHours() >= 12 ? 1 : 0)
+        //const date = moment(new Date()).add(addDay,'d').format("DD-MM-YYYY");
         var centerCnt = 0;
         var autoBooking = document.getElementById("enableBooking").checked;
-        const centerList = []
+        var bookingSuccess;
+        const centerList = [];
+        
         $.ajax({
             type: "GET",
-            url: "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/findByDistrict?district_id=" + filters.dist_id + "&date=" + date,
+            url: "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/findByDistrict?district_id=" + filters.dist_id + "&date=" + filters.date,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function (data) {
@@ -230,13 +262,26 @@
                         && (this.name.match(filters.center_name))
                         && (this.address.match(filters.center_addr))
                        ){
-                        if (autoBooking && bookingInProgress){
-                            bookAppointment(this.center_id, this.session_id, this.slots.pop());
+                        if (autoBooking && bookingInProgress && bookingRetryCnt>0){
+                            bookAppointment(this);
+                            bookingRetryCnt -= 1;
+                            /*if (bookAppointment(this.center_id, this.session_id, this.slots.pop())){
+                                alert("Appointment booked successfully at below center!\n"+this.name+"\nVaccine: "+this.vaccine+"\nFee Type: "+this.fee_type+"\n\nLogin on CoWIN site to verify and download your appointment slip.");
+                                resetBooking();
+                            }
+                            if (testThis(this)){
+                                alert("It worked");
+                                resetBooking();
+                            }
+                            else{
+                                bookingRetryCnt -= 1;
+                            }*/
                         }
-                        eval('var valueToPrint = this.name+", "+this.available_capacity_dose'+filters.dose)
+                        //eval('var valueToPrint = this.name+", "+this.available_capacity_dose'+filters.dose)
                         //var center = "<li class='list-group-item'>"+valueToPrint+"</li>"
                         //$("#centersList").append(center);
-                        var center = "<tr><td>"+this.pincode+"</td><td>"+this.name+"</td><td>"+eval('this.available_capacity_dose'+filters.dose)+"</td></tr>";
+                        var span_class = (this.vaccine.toUpperCase()=='COVAXIN')?'bg-secondary':((this.vaccine.toUpperCase()=='COVISHIELD')?'bg-primary':'bg-dark');
+                        var center = "<tr><td>"+this.pincode+"</td><td>"+this.name+" <span class='badge rounded-pill "+span_class+"'>"+this.vaccine+"</span></td><td>"+this.available_capacity_dose1+"</td><td>"+this.available_capacity_dose2+"</td></tr>";
                         //$("#centersRows").append(center);
                         centerList.push(center);
                         centerCnt += 1;
@@ -246,7 +291,7 @@
                 $.each(centerList,function() {
                     $("#centersRows").append(this);
                 });
-                document.getElementById("mainAlert").innerHTML = "<h6>Total centers found for <strong>"+date+"</strong>: " + centerCnt+"</h6><hr><p class='mb-0'><small>Last refreshed at "+moment(new Date()).format("DD-MM-YYYY HH:mm:ss")+"<small></p>";
+                document.getElementById("mainAlert").innerHTML = "<h6>Total centers found for <strong>"+filters.date+"</strong>: " + centerCnt+"</h6><hr><p class='mb-0'><small>Last refreshed at "+moment(new Date()).format("DD-MM-YYYY HH:mm:ss")+"<small></p>";
                 $("#mainAlert").removeClass('d-none');
                 $("#mainAlert").addClass('alert-warning');
                 document.getElementById("mainAlert").scrollIntoView();
@@ -269,3 +314,5 @@
             });
         }
     });
+    
+    document.getElementById("datePicker").valueAsDate = new Date();
