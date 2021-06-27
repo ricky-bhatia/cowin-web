@@ -217,13 +217,13 @@
       <button type="button" class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#privacyModal">Privacy</button>
       <a role="button" href="https://forms.gle/WJD1ESv3agoYFzEz5" target="_blank" class="btn btn-outline-secondary btn-sm">Issues/Feedback</a>
       <a role="button" href="https://selfregistration.cowin.gov.in/" target="_blank" class="btn btn-secondary btn-sm">Book on CoWIN</a>
-      <button type="button" class="btn btn-outline-secondary btn-sm">Help</button>
+      <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#upcomingFeatures">Planned Features</button>
     </div>
     <div>
       <a href="https://hits.seeyoufarm.com"><img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fco-win.herokuapp.com&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false"/></a>
     </div>
   </footer>
-  <div class="modal fade" id="privacyModal" tabindex="-1" aria-labelledby="privacyModalLabel" aria-hidden="true">
+    <div class="modal fade" id="privacyModal" tabindex="-1" aria-labelledby="privacyModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
@@ -237,6 +237,23 @@
             <p><small>None of user information is being knowingly logged by the code.</small></p>
             <h6>Cookies</h6>
             <p><small>There might be 1 cookie being used purely to keep a count of users visiting the site. This is only there to help me get some stats of usage of the site.</small></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="upcomingFeatures" tabindex="-1" aria-labelledby="upcomingFeaturesLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Planned Features</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <ul class="list-group">
+              <li class="list-group-item">Book an appointment by clicking link in the center list table.</li>
+              <li class="list-group-item">Add a filter for minimum slot count (to filter out centers with cancelled slots)</li>
+              <li class="list-group-item">List probable center slot posting timings.</li>
+            </ul>
           </div>
         </div>
       </div>

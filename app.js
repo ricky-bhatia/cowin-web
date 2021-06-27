@@ -97,7 +97,14 @@
                 });
                 $('#beneficiariesList').attr('required', 'required');
                 $('#startBookingBtn').removeAttr('disabled');
+            },
+            error: function (jqxhr, status, error) {
+                if (jqxhr.status == 400) {
+                    response = JSON.parse(jqxhr.responseText)
+                    alert(response.error);
+                }
             }
+
         });
     }
     //function bookAppointment(center_id, session_id, slot_time){
@@ -128,6 +135,10 @@
                 else if (jqxhr.status == 409) {
                     response = JSON.parse(jqxhr.responseText);
                     console.log(response.error);
+                }
+                else{
+                    alert("Got error code "+jqxhr.status+" while trying to book appointment.");
+                    resetBooking();
                 }
             }
         });
