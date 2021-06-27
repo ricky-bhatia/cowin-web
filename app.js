@@ -181,7 +181,9 @@
     }
     function setupFilters(){
         filters.dist_id     = document.getElementById("districtList").value;
-        filters.date        = moment(new Date(document.getElementById("datePicker").value)).format('DD-MM-YYYY');
+        //filters.date        = moment(new Date(document.getElementById("datePicker").value)).format('DD-MM-YYYY');
+        filters.date        = document.getElementById("datePicker").value;
+        console.log(filters.date);
         filters.age_group   = document.getElementById("ageList").value;
         filters.vaccine     = document.getElementById("vaccineList").value;
         filters.fee_type    = document.getElementById("feeList").value;
@@ -315,4 +317,12 @@
         }
     });
     
-    document.getElementById("datePicker").valueAsDate = new Date();
+    //document.getElementById("datePicker").valueAsDate = new Date();
+    $('#datePicker').datepicker({
+        autoclose: true,
+        todayBtn: true,
+        todayHighlight: true,
+        startDate: "today",
+        format: "dd-mm-yyyy"
+    });
+    document.getElementById("datePicker").value = moment(new Date()).add(1,'d').format("DD-MM-YYYY");
