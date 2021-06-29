@@ -118,8 +118,7 @@
         });
     }
     function bookAppointment(center_id, session_id, slot_time){
-    //function bookAppointment(center){
-        var resp = $.ajax({
+        var response = $.ajax({
             type: "POST",
             url: "https://cdn-api.co-vin.in/api/v2/appointment/schedule",
             data: JSON.stringify({
@@ -133,11 +132,9 @@
             dataType: "json",
             success: function (data) {
                 console.log("Appointment booked successfully.");
-                //resetBooking();
-                //alert("Appointment booked successfully at below center!\n"+center.name+"\nVaccine: "+center.vaccine+"\nFee Type: "+center.fee_type+"\n\nLogin on CoWIN site to verify and download your appointment slip.");
             }
         });
-        return resp;
+        return response;
     }
     
     function bookingDefault(){
@@ -188,7 +185,6 @@
     }
     function setupFilters(){
         filters.dist_id     = document.getElementById("districtList").value;
-        //filters.date        = moment(new Date(document.getElementById("datePicker").value)).format('DD-MM-YYYY');
         filters.date        = document.getElementById("datePicker").value;
         filters.age_group   = document.getElementById("ageList").value;
         filters.vaccine     = document.getElementById("vaccineList").value;
@@ -294,8 +290,6 @@
     }
     
     async function findByDistrict(){
-        //var addDay = (new Date().getHours() >= 12 ? 1 : 0)
-        //const date = moment(new Date()).add(addDay,'d').format("DD-MM-YYYY");
         var centerCnt = 0;
         var autoBooking = document.getElementById("enableBooking").checked;
         var bookingSuccess;
@@ -338,39 +332,13 @@
                                 alert("Stopping booking due to below error.\n\n"+err.responseText);
                             }
                         });
-                        //var response = getDistricts();
-                        //console.log(response);
-                        //bookingInProgress = false;
-                        //resetBooking();
-                        //alert("Stopping booking");
                         bookingRetryCnt -= 1;
                         holdOff = true;
-                        /*getDistricts().then(response => {
-                            console.log(response);
-                            resetBooking();
-                            alert("Stopping booking");
-                        });
-                        bookingRetryCnt -= 1;
-                        /*if (bookAppointment(this.center_id, this.session_id, this.slots.pop())){
-                            alert("Appointment booked successfully at below center!\n"+this.name+"\nVaccine: "+this.vaccine+"\nFee Type: "+this.fee_type+"\n\nLogin on CoWIN site to verify and download your appointment slip.");
-                            resetBooking();
-                        }
-                        if (testThis(this)){
-                            alert("It worked");
-                            resetBooking();
-                        }
-                        else{
-                            bookingRetryCnt -= 1;
-                        }*/
                     }
                 }
-                //eval('var valueToPrint = this.name+", "+this.available_capacity_dose'+filters.dose)
-                //var center = "<li class='list-group-item'>"+valueToPrint+"</li>"
-                //$("#centersList").append(center);
                 var span_class = (this.vaccine.toUpperCase()=='COVAXIN')?'bg-secondary':((this.vaccine.toUpperCase()=='COVISHIELD')?'bg-primary':'bg-dark');
                 var book_btn= '<button type="button" class="btn btn-info btn-sm" onclick="manualBook(this)" data-centerid='+this.center_id+' data-sessionid='+this.session_id+' data-slot='+this.slots[this.slots.length - 1]+'>Book</button>';
                 var center = "<tr><td>"+this.pincode+"</td><td>"+this.name+" <span class='badge rounded-pill "+span_class+"'>"+this.vaccine+"</span></td><td>"+this.available_capacity_dose1+"</td><td>"+this.available_capacity_dose2+"</td><td>"+book_btn+"</td></tr>";
-                //$("#centersRows").append(center);
                 centerList.push(center);
                 centerCnt += 1;
             }
@@ -403,7 +371,7 @@
         }
     });
     
-    //document.getElementById("datePicker").valueAsDate = new Date();
+    // Initialize bootstrap datepicker
     $('#datePicker').datepicker({
         autoclose: true,
         todayBtn: true,
