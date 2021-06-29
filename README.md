@@ -15,3 +15,4 @@ The search results are displayed in a table at the bottom of the webpage. Each r
 #### Booking Scheduler
 This form lets you login by sending the OTP and verifying it. Once you select the beneficiaries, you can either start a automated booking or manual booking (clicking Book button on Results table). In the automated booking mode, the app will search for suitable centers as per your selected options, and try to book the first center it was able to find.
 ![app_screenshot_3](https://user-images.githubusercontent.com/24500534/123790228-b3ced680-d8fb-11eb-936c-08b5ecaa34e6.png)
+
