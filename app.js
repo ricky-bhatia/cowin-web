@@ -4,7 +4,7 @@
     var bookingInProgress=false;
     var trackingInProgress=false;
     var otpTimeout;
-    var tokenTimeout;
+    var tokenTimeout=0;
     var bookingRetryCnt = 3;
     const filters={};
     
@@ -194,6 +194,7 @@
         filters.vaccine     = document.getElementById("vaccineList").value;
         filters.fee_type    = document.getElementById("feeList").value;
         filters.dose        = document.getElementById("doseList").value;
+        filters.min_slots   = document.getElementById("minSlots").value;
         filters.pincodes    = [];
         if (document.getElementById("pincodeList").value.trim()){
             filters.pincodes    = document.getElementById("pincodeList").value.split(",").map(e => e.trim());
@@ -228,6 +229,7 @@
     function stopTracking(){
         clearInterval(timer);
         clearTimeout(tokenTimeout);
+        tokenTimeout = 0;
         $("#stopTrackingBtn").addClass('d-none');
         $("#startTrackingBtn").removeClass('d-none');
         $("#benListdiv").addClass('d-none');
@@ -245,6 +247,50 @@
     function testThis(session){
         alert("Appointment booked successfully at below center!\n"+session.name+"\nVaccine: "+session.vaccine+"\nFee Type: "+session.fee_type+"\n\nLogin on CoWIN site to verify and download your appointment slip.");
         return true;
+    }
+    
+    function manualBook(centerRow){
+        //alert(centerRow.dataset.centerid + " " +centerRow.dataset.sessionid + " "+centerRow.dataset.slot);
+        filters.selected_bens = [];
+        var autoBooking = document.getElementById("enableBooking").checked;
+        if (tokenTimeout){
+            if (autoBooking || bookingInProgress){
+                alert("Please uncheck Enable Booking Scheduler option to proceed with manual booking. Make sure automated booking session is not started.");
+            }
+            else{
+                for (var option of document.getElementById('beneficiariesList').options)
+                {
+                    if (option.selected) {
+                        filters.selected_bens.push(option.value);
+                    }
+                }
+                if (!filters.selected_bens.length){
+                    alert("Please select one or more beneficiaries.");
+                }
+                else{
+                    bookAppointment(centerRow.dataset.centerid, centerRow.dataset.sessionid, centerRow.dataset.slot).then(response => {
+                        console.log(response);
+                        //resetBooking();
+                        alert("Appointment booked successfully at selected center!\n\nLogin on CoWIN site to verify and download your appointment slip.");})
+                    .catch(err => {
+                        if (err.status==409){
+                            console.log(err.responseText);
+                        }
+                        else if (err.status==400){
+                            //resetBooking();
+                            alert("Got below error while trying to book appointment.\n\n"+err.responseJSON.error);
+                        }
+                        else{
+                            //resetBooking();
+                            alert("Got below error while trying to book appointment.\n\n"+err.responseText);
+                        }
+                    });
+                }
+            }
+        }
+        else{
+            alert("Please use the 'Booking Scheduler' form to login and select your beneficiaries.");
+        }
     }
     
     async function findByDistrict(){
@@ -266,7 +312,7 @@
             }
         });
         $.each(result.sessions, function () {
-            if ((eval('this.available_capacity_dose'+filters.dose+' > 0') && this.min_age_limit == filters.age_group)
+            if ((eval('this.available_capacity_dose'+filters.dose+' >= '+filters.min_slots) && this.min_age_limit == filters.age_group)
                 && (filters.vaccine=="ANY" || this.vaccine.toUpperCase()==filters.vaccine)
                 && (filters.fee_type=="ANY" || this.fee_type.toUpperCase()==filters.fee_type)
                 && (!filters.pincodes.length || filters.pincodes.includes(this.pincode.toString()))
@@ -322,7 +368,8 @@
                 //var center = "<li class='list-group-item'>"+valueToPrint+"</li>"
                 //$("#centersList").append(center);
                 var span_class = (this.vaccine.toUpperCase()=='COVAXIN')?'bg-secondary':((this.vaccine.toUpperCase()=='COVISHIELD')?'bg-primary':'bg-dark');
-                var center = "<tr><td>"+this.pincode+"</td><td>"+this.name+" <span class='badge rounded-pill "+span_class+"'>"+this.vaccine+"</span></td><td>"+this.available_capacity_dose1+"</td><td>"+this.available_capacity_dose2+"</td></tr>";
+                var book_btn= '<button type="button" class="btn btn-info btn-sm" onclick="manualBook(this)" data-centerid='+this.center_id+' data-sessionid='+this.session_id+' data-slot='+this.slots[this.slots.length - 1]+'>Book</button>';
+                var center = "<tr><td>"+this.pincode+"</td><td>"+this.name+" <span class='badge rounded-pill "+span_class+"'>"+this.vaccine+"</span></td><td>"+this.available_capacity_dose1+"</td><td>"+this.available_capacity_dose2+"</td><td>"+book_btn+"</td></tr>";
                 //$("#centersRows").append(center);
                 centerList.push(center);
                 centerCnt += 1;
@@ -365,3 +412,10 @@
         format: "dd-mm-yyyy"
     });
     document.getElementById("datePicker").value = moment(new Date()).add(1,'d').format("DD-MM-YYYY");
+    
+    function googleTranslateElementInit() { 
+        new google.translate.TranslateElement(
+            {pageLanguage: 'en'}, 
+            'google_translate_element'
+        ); 
+    }
