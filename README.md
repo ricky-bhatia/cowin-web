@@ -2,7 +2,7 @@
 A clean, simple and responsive **CoWIN** vaccine tracker that shows available vaccine counts and also help you book an appointment as per your selected options. It is built using Bootstrap 5 and javascript.
 
 ### Important Note!
-This started as a learning project for me wherein I wanted to make a responsive webpage to help me track the vaccination slots. As it started gaining shape, I added some more features to make it more useful to all. 
+This started as a learning project for me wherein I wanted to make a responsive webpage to help me track the vaccination slots. As it started gaining shape, I added some more features to make it more useful to all. I am not an expert in javascript, so you may find some code could be done in a better way. Feel free to provide any feedback or issues.
 
 #### Tracking Options
 The first part of the page lets you select the options/filters. Once you click **Start Tracking** the centers will be displayed based on your choices.
