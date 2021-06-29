@@ -103,7 +103,7 @@
                 <label for="minSlots" class="form-label">Min Slots</label>
                 <input  class="form-control" type="number" value=1 id="minSlots" min=1>
                 <div class="invalid-feedback">
-                    Please provide a valid count.
+                    Please enter a value greater than 0.
               </div>
             </div>
             <div class="col-12">
@@ -157,7 +157,10 @@
             <div class="d-grid gap-2 mx-auto">
               <button type="button" id="searchOnceBtn" class="btn btn-success" onclick="findCenters()">Search Once</button>
               <button type="button" id="startTrackingBtn" class="btn btn-primary" onclick="startTracking()">Start Tracking</button>
-              <button type="button" id="stopTrackingBtn" class="btn btn-danger d-none" onclick="stopTracking()">Stop Tracking</button>
+              <button type="button" id="stopTrackingBtn" class="btn btn-danger d-none" onclick="stopTracking()">
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"> </span>
+                Stop Tracking
+              </button>
             </div>
           </div>
         </form>
@@ -171,12 +174,13 @@
               <label class="form-check-label" for="enableBooking">Enable Booking Scheduler</label>
             </div>
             <div id="sendOTPdiv" class="input-group mb-3">
-              <input type="text" class="form-control" id="mobileNumber" placeholder="Mobile Number" aria-label="Mobile Number" aria-describedby="button-addon1">
+              <span class="input-group-text">+91</span>
+              <input type="number" class="form-control" id="mobileNumber" placeholder="Mobile Number" aria-label="Mobile Number" aria-describedby="button-addon1">
               <button class="btn btn-outline-secondary" type="button" onclick="sendOTP()" id="button-addon1">Send OTP</button>
             </div>
             
             <div id="verifyOTPdiv" class="input-group mb-3 d-none">
-              <input type="text" class="form-control" id="otp" placeholder="Enter OTP" aria-label="Enter OTP" aria-describedby="button-addon2">
+              <input type="number" class="form-control" id="otp" placeholder="Enter OTP" aria-label="Enter OTP" aria-describedby="button-addon2">
               <button class="btn btn-outline-secondary" type="button" onclick="verifyOTP()" id="button-addon2">Verify OTP</button>
             </div>
             
@@ -193,6 +197,7 @@
               <button type="button" id="startBookingBtn" class="btn btn-primary" disabled onclick="startBooking()">Start Booking</button>
               <button type="button" id="stopBookingBtn" class="btn btn-danger d-none" onclick="stopBooking()">Stop Booking</button>
             </div>
+            
         </form>
         <br/>
         <div id="mainAlert" class="alert fade show d-none" role="alert">
