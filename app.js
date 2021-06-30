@@ -5,6 +5,10 @@
     var trackingInProgress=false;
     var otpTimeout;
     var tokenTimeout=0;
+    var tokenTime = 15*60;
+    var tokenTime = 3*60;
+    var tokenPB=0;
+    var otpPB=0;
     var bookingRetryCnt = 3;
     const filters={};
     
@@ -46,7 +50,9 @@
                 dataType: "json",
                 success: function (data) {
                     txnId = data.txnId;
-                    otpTimeout = setTimeout(notifyOTPTimeout, 1000*60*3);
+                    otpTime = 3*60;
+                    otpTimeout = setTimeout(notifyOTPTimeout, 1000*otpTime);
+                    otpPB = setInterval(updateOTPProgressBar, 1000);
                     alert("OTP sent on mobile. It will be valid only for 3 minutes.");
                     $("#sendOTPdiv").addClass('d-none');
                     $("#verifyOTPdiv").removeClass('d-none');
@@ -74,8 +80,12 @@
                 success: function (data) {
                     token = data.token;
                     clearTimeout(otpTimeout);
+                    clearInterval(otpPB);
+                    otpPB = 0;
                     // Token is valid for 15 minutes. After this timeout the session gets logged out
-                    tokenTimeout = setTimeout(notifyTokenTimeout, 1000*60*15);
+                    tokenTime = 15*60;
+                    tokenTimeout = setTimeout(notifyTokenTimeout, 1000*tokenTime);
+                    tokenPB = setInterval(updateTokenProgressBar, 1000);
                     alert("OTP verified successfully.");
                     bookingDefault();
                     getBeneficiaries();
@@ -177,6 +187,9 @@
     }
     function resetBooking(){
         bookingInProgress = false;
+        clearInterval(tokenPB);
+        tokenPB = 0;
+        updateProgressBar(0,0);
         stopTracking();
         $("#stopBookingBtn").addClass('d-none');
         $("#startBookingBtn").removeClass('d-none');
@@ -237,13 +250,30 @@
     }
     function notifyOTPTimeout(){
         alert("OTP validity expired. You will need to send OTP again.");
+        clearInterval(otpPB);
+        otpPB = 0;
+        updateProgressBar(0,0);
         bookingDefault();
     }
     
-    function testThis(session){
-        alert("Appointment booked successfully at below center!\n"+session.name+"\nVaccine: "+session.vaccine+"\nFee Type: "+session.fee_type+"\n\nLogin on CoWIN site to verify and download your appointment slip.");
-        return true;
+    function updateTokenProgressBar(){
+        tokenTime -= 1;
+        var per = Math.floor((tokenTime/900)*100);
+        updateProgressBar(per, tokenTime + ' s');
     }
+    function updateOTPProgressBar(){
+        otpTime -= 1;
+        var per = Math.floor((otpTime/180)*100);
+        updateProgressBar(per, otpTime + ' s');
+    }
+    function updateProgressBar(per,label){
+        document.getElementById('progressBar').setAttribute('aria-valuenow',per);
+        document.getElementById('progressBar').setAttribute('style','width:'+Number(per)+'%');
+        if (label){
+            document.getElementById('progressBar').innerHTML = label;
+        }
+    }
+    
     
     function manualBook(centerRow){
         //alert(centerRow.dataset.centerid + " " +centerRow.dataset.sessionid + " "+centerRow.dataset.slot);
