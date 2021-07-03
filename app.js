@@ -383,8 +383,16 @@
         $("#mainAlert").removeClass('d-none');
         $("#mainAlert").addClass('alert-warning');
         document.getElementById("mainAlert").scrollIntoView();
+        /*if (centerCnt > 0){
+            audioalert();
+        }*/
         
     }
+    
+    function audioalert() {
+        const msg = new SpeechSynthesisUtterance("Vaccine center is now available.");
+        window.speechSynthesis.speak(msg);
+    };
     
     // Populate State options
     $.ajax({
@@ -417,3 +425,4 @@
             'google_translate_element'
         ); 
     }
+    
