@@ -11,6 +11,8 @@
     var otpPB=0;
     var bookingRetryCnt = 3;
     const filters={};
+    var prevIter = {};
+    var firstIter = true;
     
     async function getDistricts(){
         var state_id = document.getElementById("stateList").value;
@@ -232,6 +234,8 @@
             }
             $("#startTrackingBtn").addClass('d-none');
             $('#searchOnceBtn').attr('disabled','disabled');
+            firstIter = true;
+            prevIter = {};
             findByDistrict();
         }
     }
@@ -321,10 +325,14 @@
     
     async function findByDistrict(){
         var centerCnt = 0;
+        var newCenterCnt = 0;
         var autoBooking = document.getElementById("enableBooking").checked;
         var bookingSuccess;
         var holdOff = false;
         const centerList = [];
+        var currIter = {};
+        var currCount = 0;
+        var newCenter = false;
         
         var result = await $.ajax({
             type: "GET",
@@ -336,6 +344,7 @@
             }
         });
         $.each(result.sessions, function () {
+            newCenter = false;
             if ((eval('this.available_capacity_dose'+filters.dose+' >= '+filters.min_slots) && this.min_age_limit == filters.age_group)
                 && (filters.vaccine=="ANY" || this.vaccine.toUpperCase()==filters.vaccine)
                 && (filters.fee_type=="ANY" || this.fee_type.toUpperCase()==filters.fee_type)
@@ -343,6 +352,7 @@
                 && (this.name.match(filters.center_name))
                 && (this.address.match(filters.center_addr))
                ){
+                currCount = eval('this.available_capacity_dose'+filters.dose);
                 if (autoBooking && bookingInProgress && !holdOff && bookingRetryCnt>0){
                     if (eval('this.available_capacity_dose'+filters.dose+' >='+filters.selected_bens.length)){
                         bookAppointment(this.center_id, this.session_id, this.slots.pop()).then(response => {
@@ -366,14 +376,30 @@
                         holdOff = true;
                     }
                 }
+                if (currCount >= 5){
+                    newCenter = true;
+                }
+                if (!currIter.hasOwnProperty(this.center_id)){
+                    currIter[this.center_id] = {};
+                }
+                currIter[this.center_id][this.session_id] = currCount;
+                if (prevIter.hasOwnProperty(this.center_id)){
+                    if (prevIter[this.center_id].hasOwnProperty(this.session_id)){
+                        newCenter = false;
+                    }
+                }
+                var row_class = "";
+                if (newCenter){
+                    row_class = " class='table-success'"; 
+                    newCenterCnt += 1;
+                }
                 var span_class = (this.vaccine.toUpperCase()=='COVAXIN')?'bg-secondary':((this.vaccine.toUpperCase()=='COVISHIELD')?'bg-primary':'bg-dark');
                 var book_btn= '<button type="button" class="btn btn-info btn-sm" onclick="manualBook(this)" data-centerid='+this.center_id+' data-sessionid='+this.session_id+' data-slot='+this.slots[this.slots.length - 1]+'>Book</button>';
-                var center = "<tr><td>"+this.pincode+"</td><td>"+this.name+" <span class='badge rounded-pill "+span_class+"'>"+this.vaccine+"</span></td><td>"+this.available_capacity_dose1+"</td><td>"+this.available_capacity_dose2+"</td><td>"+book_btn+"</td></tr>";
+                var center = "<tr"+row_class+"><td>"+this.pincode+"</td><td>"+this.name+" <span class='badge rounded-pill "+span_class+"'>"+this.vaccine+"</span></td><td>"+this.available_capacity_dose1+"</td><td>"+this.available_capacity_dose2+"</td><td>"+book_btn+"</td></tr>";
                 centerList.push(center);
                 centerCnt += 1;
             }
         });
-        
         document.getElementById("centersRows").innerHTML = "";
         centerList.sort();
         $.each(centerList,function() {
@@ -383,14 +409,14 @@
         $("#mainAlert").removeClass('d-none');
         $("#mainAlert").addClass('alert-warning');
         document.getElementById("mainAlert").scrollIntoView();
-        /*if (centerCnt > 0){
-            audioalert();
-        }*/
-        
+        if (newCenterCnt > 0){
+            audioalert(newCenterCnt);
+        }
+        prevIter = currIter;
     }
     
-    function audioalert() {
-        const msg = new SpeechSynthesisUtterance("Vaccine center is now available.");
+    function audioalert(cnt) {
+        const msg = new SpeechSynthesisUtterance(cnt + " new vaccine centers are now available.");
         window.speechSynthesis.speak(msg);
     };
     
