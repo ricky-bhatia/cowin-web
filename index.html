@@ -158,7 +158,12 @@
                 <option value="2">Dose 2</option>
               </select>
             </div>
-            
+            <div class="form-check mb-3">
+              <input class="form-check-input" type="checkbox" value="" id="enableCenterTimes" onchange='handleCenterTimes(this);'>
+              <label class="form-check-label" for="enableCenterTimes">Fetch past center posting times 
+                <span class="spinner-border spinner-border-sm d-none" id="centerTimeSpinner" role="status" aria-hidden="true"> </span>
+                <br/><span class="text-muted"><small>(Upto last 7 days. Could help identify a pattern of when centers open their slots. You can set <u>Min Slots</u> field to 0 and click <u>Search Once</u> to get a list of centers with their history of timings.)</small></span></label>
+            </div>
             <div class="d-grid gap-2 mx-auto">
               <button type="button" id="searchOnceBtn" class="btn btn-success" onclick="findCenters()">Search Once</button>
               <button type="button" id="startTrackingBtn" class="btn btn-primary" onclick="startTracking()">Start Tracking</button>

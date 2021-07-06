@@ -13,6 +13,9 @@
     const filters={};
     var prevIter = {};
     var firstIter = true;
+    const timingAPI_base = 'https://cowin-centers.herokuapp.com';
+    const timingAPI_ver  = '/api/v1';
+    var center_times=[];
     
     async function getDistricts(){
         var state_id = document.getElementById("stateList").value;
@@ -101,6 +104,32 @@
             });
         }
     }
+    function getCenterTimes(){
+        var qParams = '?past_days=7';
+        if (filters.hasOwnProperty('dist_id') || document.getElementById("districtList").value){
+            var tmpID = (filters.hasOwnProperty('dist_id')) ? filters.dist_id : document.getElementById("districtList").value;
+            qParams += "&district_id="+tmpID;
+        }
+        if (filters.hasOwnProperty('age_group')){
+            qParams += "&age="+filters.age_group;
+        }
+        var response = $.ajax({
+            type: "GET",
+            url: timingAPI_base+timingAPI_ver+"/centers/timings"+qParams,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                center_times = data;
+            },
+            error: function (jqxhr, status, error) {
+                if (jqxhr.status == 400) {
+                    response = JSON.parse(jqxhr.responseText)
+                    alert(response.error);
+                }
+            }
+        });
+        return response;
+    }
 
     function getBeneficiaries(){
         $.ajax({
@@ -126,7 +155,6 @@
                     alert(response.error);
                 }
             }
-
         });
     }
     function bookAppointment(center_id, session_id, slot_time){
@@ -206,6 +234,7 @@
         filters.fee_type    = document.getElementById("feeList").value;
         filters.dose        = document.getElementById("doseList").value;
         filters.min_slots   = document.getElementById("minSlots").value;
+        filters.print_time  = document.getElementById("enableCenterTimes").checked;
         filters.pincodes    = [];
         if (document.getElementById("pincodeList").value.trim()){
             filters.pincodes    = document.getElementById("pincodeList").value.split(",").map(e => e.trim());
@@ -219,15 +248,25 @@
             filters.center_addr = new RegExp('('+document.getElementById("addressList").value.split(",").map(e => e.trim()).join('|')+')','gi');
         }
     }
+    function handleCenterTimes(chkbox){
+        if ((document.getElementById("districtList").value)&&(chkbox.checked==true)){
+            $("#centerTimeSpinner").removeClass('d-none');
+            getCenterTimes().then(response => {
+                console.log("Got center times");
+                $("#centerTimeSpinner").addClass('d-none');})
+        }
+    }
     function findCenters(){
         if (document.getElementById("districtList").value){
             setupFilters();
+            if (filters.print_time) getCenterTimes();
             findByDistrict();
         }
     }
     function startTracking(){
         if (document.getElementById("districtList").value){
             setupFilters();
+            if (filters.print_time) getCenterTimes();
             timer = setInterval(findByDistrict, 10*1000);
             if (!bookingInProgress){
                 $("#stopTrackingBtn").removeClass('d-none');
@@ -393,9 +432,19 @@
                     row_class = " class='table-success'"; 
                     newCenterCnt += 1;
                 }
+                var ctimes = '';
+                if (filters.print_time && center_times.length>0){
+                    var tmpID = this.center_id;
+                    var vacc  = this.vaccine.toUpperCase();
+                    $.each(center_times, function () {
+                        if (this.center_id == tmpID && this.vaccine.startsWith(vacc)){
+                            ctimes += moment(this.posting_ts).add(330, 'minutes').format('hh:mm A') + ' | ';
+                        }
+                    });
+                }
                 var span_class = (this.vaccine.toUpperCase()=='COVAXIN')?'bg-secondary':((this.vaccine.toUpperCase()=='COVISHIELD')?'bg-primary':'bg-dark');
                 var book_btn= '<button type="button" class="btn btn-info btn-sm" onclick="manualBook(this)" data-centerid='+this.center_id+' data-sessionid='+this.session_id+' data-slot='+this.slots[this.slots.length - 1]+'>Book</button>';
-                var center = "<tr"+row_class+"><td>"+this.pincode+"</td><td>"+this.name+" <span class='badge rounded-pill "+span_class+"'>"+this.vaccine+"</span></td><td>"+this.available_capacity_dose1+"</td><td>"+this.available_capacity_dose2+"</td><td>"+book_btn+"</td></tr>";
+                var center = "<tr"+row_class+"><td>"+this.pincode+"</td><td>"+this.name+" <span class='badge rounded-pill "+span_class+"'>"+this.vaccine+"</span><BR/><small class='text-primary'>"+ctimes+"</small></td><td>"+this.available_capacity_dose1+"</td><td>"+this.available_capacity_dose2+"</td><td>"+book_btn+"</td></tr>";
                 centerList.push(center);
                 centerCnt += 1;
             }
