@@ -465,9 +465,11 @@
     }
     
     function audioalert(cnt) {
-        const msg = new SpeechSynthesisUtterance(cnt + " new vaccine centers are now available.");
-        window.speechSynthesis.speak(msg);
-    };
+        if (document.getElementById("audioAlertChk").checked){
+            const msg = new SpeechSynthesisUtterance(cnt + " new vaccine centers are now available.");
+            window.speechSynthesis.speak(msg);
+        }
+    }
     
     // Populate State options
     $.ajax({
