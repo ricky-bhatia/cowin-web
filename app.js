@@ -171,10 +171,22 @@
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function (data) {
+                updateBookingCount(center_id);
                 console.log("Appointment booked successfully.");
             }
         });
         return response;
+    }
+    function updateBookingCount(center_id){
+        $.ajax({
+            type: "POST",
+            url: timingAPI_base + timingAPI_ver + "/booking/count",
+            data: JSON.stringify({
+                center_id     : center_id,
+                slots         : filters.selected_bens.length}),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json"
+        });
     }
     
     function bookingDefault(){
