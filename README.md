@@ -6,7 +6,7 @@ This started as a learning project for me wherein I wanted to make a responsive 
 
 #### Tracking Options
 The first part of the page lets you select the options/filters. Once you click **Start Tracking** the centers will be displayed based on your choices.
-![app_screenshot_1](https://user-images.githubusercontent.com/24500534/123788916-36ef2d00-d8fa-11eb-807b-aa1ba603e450.png)
+![image](https://user-images.githubusercontent.com/24500534/125296930-65cac180-e344-11eb-806c-830d4fb38990.png)
 
 #### Search Results
 The search results are displayed in a table at the bottom of the webpage. Each result row will also have a **Book** button associated with it. If you are logged in the **Booking Scheduler** section of the page (with Beneficiaries selected), the appointment booking will be attempted at the center you have clicked. An alert box will be displayed notifying that the booking was successful or if there was any error with it. **NOTE:** Please ensure that the options you have selected in Tracker area match the dose/vaccine required for the beneficiaries, else the booking will be unsuccessful.
