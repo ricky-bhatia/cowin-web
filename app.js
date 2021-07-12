@@ -396,7 +396,7 @@
         });
         $.each(result.sessions, function () {
             newCenter = false;
-            if ((eval('this.available_capacity_dose'+filters.dose+' >= '+filters.min_slots) && (this.min_age_limit == filters.age_group || this.allow_all_age))
+            if ((eval('this.available_capacity_dose'+filters.dose+' >= '+filters.min_slots) && (this.min_age_limit == filters.age_group || this.allow_all_age==true))
                 && (filters.vaccine=="ANY" || this.vaccine.toUpperCase()==filters.vaccine)
                 && (filters.fee_type=="ANY" || this.fee_type.toUpperCase()==filters.fee_type)
                 && (!filters.pincodes.length || filters.pincodes.includes(this.pincode.toString()))
