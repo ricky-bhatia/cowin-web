@@ -6,7 +6,7 @@
     var otpTimeout;
     var tokenTimeout=0;
     var tokenTime = 15*60;
-    var tokenTime = 3*60;
+    var otpTime = 3*60;
     var tokenPB=0;
     var otpPB=0;
     var bookingRetryCnt = 3;
