@@ -480,8 +480,18 @@
     
     function audioalert(cnt) {
         if (document.getElementById("audioAlertChk").checked){
-            const msg = new SpeechSynthesisUtterance(cnt + " new vaccine centers are now available.");
-            window.speechSynthesis.speak(msg);
+            //const msg = new SpeechSynthesisUtterance(cnt + " new vaccine centers are now available.");
+            //window.speechSynthesis.speak(msg);
+            
+            let speech = new SpeechSynthesisUtterance();
+
+            speech.lang = "en-IN";
+            speech.text = cnt + " new vaccine centers are now available.";
+            speech.volume = 2;
+            speech.rate = 1;
+            speech.pitch = 2;
+
+            window.speechSynthesis.speak(speech);
         }
     }
     
