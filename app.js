@@ -142,7 +142,7 @@
                 $('#beneficiariesList').empty();
                 $("#benListdiv").removeClass('d-none');
                 $.each(data.beneficiaries, function () {
-                    var ben_data = this.name.trim() + " (Age: " + (new Date().getFullYear()-this.birth_year) + ", " + this.vaccination_status + ")"
+                    var ben_data = this.name.trim() + " (Age: " + (new Date().getFullYear()-this.birth_year) + ", " + this.vaccination_status + ", " + this.vaccine + ")"
                     var options = "<option " + "value='" + this.beneficiary_reference_id + "'>" + ben_data + "";
                     $("#beneficiariesList").append(options);
                 });
@@ -246,7 +246,8 @@
         filters.fee_type    = document.getElementById("feeList").value;
         filters.dose        = document.getElementById("doseList").value;
         filters.min_slots   = document.getElementById("minSlots").value;
-        filters.print_time  = document.getElementById("enableCenterTimes").checked;
+        //filters.print_time  = document.getElementById("enableCenterTimes").checked;
+        filters.print_time  = false;
         filters.pincodes    = [];
         if (document.getElementById("pincodeList").value.trim()){
             filters.pincodes    = document.getElementById("pincodeList").value.split(",").map(e => e.trim());
@@ -455,8 +456,9 @@
                     });
                 }
                 var span_class = (this.vaccine.toUpperCase()=='COVAXIN')?'bg-secondary':((this.vaccine.toUpperCase()=='COVISHIELD')?'bg-primary':'bg-dark');
+                var age_col = (this.allow_all_age==true)?'18 & Above':((this.min_age_limit==18)?'18-44 Only':((this.min_age_limit==45)?'45 & Above':'Unknown'));
                 var book_btn= '<button type="button" class="btn btn-info btn-sm" onclick="manualBook(this)" data-centerid='+this.center_id+' data-sessionid='+this.session_id+' data-slot='+this.slots[this.slots.length - 1]+'>Book</button>';
-                var center = "<tr"+row_class+"><td>"+this.pincode+"</td><td>"+this.name+" <span class='badge rounded-pill "+span_class+"'>"+this.vaccine+"</span><BR/><small class='text-primary'>"+ctimes+"</small></td><td>"+this.available_capacity_dose1+"</td><td>"+this.available_capacity_dose2+"</td><td>"+book_btn+"</td></tr>";
+                var center = "<tr"+row_class+"><td>"+this.pincode+"</td><td>"+this.name+" <span class='badge rounded-pill "+span_class+"'>"+this.vaccine+"</span><BR/><small class='text-primary'>"+ctimes+"</small></td><td>"+this.available_capacity_dose1+"</td><td>"+this.available_capacity_dose2+"</td><td>"+age_col+"</td><td>"+book_btn+"</td></tr>";
                 centerList.push(center);
                 centerCnt += 1;
             }

@@ -158,21 +158,21 @@
                 <option value="2">Dose 2</option>
               </select>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-12">
                 <div class="form-check mb-3">
                   <input class="form-check-input" type="checkbox" value="" id="audioAlertChk" checked>
                   <label class="form-check-label" for="audioAlertChk">Enable Audio Alert
                   <br/><span class="text-muted"><small>(If enabled then whenever a new center is opened with 5 or more slots, an audio alert will be played.)</small></span></label>
                 </div>
             </div>
-            <div class="col-md-6">
+            <!--<div class="col-md-6">
                 <div class="form-check mb-3">
                   <input class="form-check-input" type="checkbox" value="" id="enableCenterTimes" onchange='handleCenterTimes(this);'>
                   <label class="form-check-label" for="enableCenterTimes">Fetch past center posting times 
                     <span class="spinner-border spinner-border-sm d-none" id="centerTimeSpinner" role="status" aria-hidden="true"> </span>
                     <br/><span class="text-muted"><small>(Upto last 7 days. Could help identify a pattern of when centers open their slots.)</small></span></label>
                 </div>
-            </div>
+            </div>-->
             <div class="d-grid gap-2 mx-auto">
               <button type="button" id="searchOnceBtn" class="btn btn-success" onclick="findCenters()">Search Once</button>
               <button type="button" id="startTrackingBtn" class="btn btn-primary" onclick="startTracking()">Start Tracking</button>
@@ -236,6 +236,7 @@
               <th scope="col">Center</th>
               <th scope="col">Dose1</th>
               <th scope="col">Dose2</th>
+              <th scope="col">Age Group</th>
               <th scope="col"></th>
             </tr>
           </thead>
@@ -248,13 +249,18 @@
 
   <footer class="my-5 pt-5 text-muted text-center text-small">
     <p class="mb-1">&copy; 2021 Ricky Bhatia</p>
-    <div class="btn-group" role="group">
+    <!--<div class="btn-group" role="group">
       <button type="button" class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#privacyModal">Privacy</button>
       <a role="button" href="https://github.com/ricky-bhatia/cowin-web/issues" target="_blank" class="btn btn-outline-secondary btn-sm">Issues</a>
       <a role="button" href="https://forms.gle/WJD1ESv3agoYFzEz5" target="_blank" class="btn btn-secondary btn-sm">Feedback</a>
       <a role="button" href="https://selfregistration.cowin.gov.in/" target="_blank" class="btn btn-outline-secondary btn-sm">Book on CoWIN</a>
       <button type="button" class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#upcomingFeatures">Planned Features</button>
-    </div>
+    </div>-->
+    <ul class="list-inline">
+        <li class="list-inline-item"><a href="#privacyModal" data-bs-toggle="modal" data-bs-target="#privacyModal">Privacy</a></li>
+        <li class="list-inline-item"><a href="https://github.com/ricky-bhatia/cowin-web/issues" target="_blank">Issues/Feedback</a></li>
+        <li class="list-inline-item"><a href="https://selfregistration.cowin.gov.in/" target="_blank">Book on CoWIN</a></li>
+    </ul>
     <div>
       <a href="https://hits.seeyoufarm.com"><img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fco-win.herokuapp.com&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false"/></a>
     </div>
