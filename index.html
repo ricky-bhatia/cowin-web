@@ -160,7 +160,7 @@
             </div>
             <div class="col-md-4">
                 <label for="refreshInterval" class="form-label">Auto-Refresh Interval <span class="text-muted"><small>(seconds)</small></label>
-                <input  class="form-control" type="number" value=4 id="refreshInterval" min=4>
+                <input  class="form-control" type="number" value=5 id="refreshInterval" min=4>
                 <div class="invalid-feedback">
                     Please enter a value greater than 4.
                 </div>
@@ -196,7 +196,11 @@
         <hr class="my-4">
         <form class="needs-validation" novalidate>
             <h4>Booking Scheduler</h4>
-            <p><small>This can help you book the vaccination appointment automatically. You'll need to login here, select the beneficiaries, and desired options using the above form. The app will then look for appropriate centers (based on your choice of options above) for upto 15 minutes, and if it finds a suitable center then automatically book an appointment for you. If no center is found in the 15 minute duration, the process will time out and you will need to login again and repeat the steps.</small></p>
+            <p><small>This section can help you book the vaccination appointment. Follow the below steps for booking the appointment.
+            <ul>
+            <li>Login here using registered mobile number, select the beneficiaries, and desired options using the above form.</li>
+            <li><strong>Automated Booking:</strong> Check the <u>Enable Booking Scheduler</u> checkbox and click <u>Start Booking</u>. The app will then look for appropriate centers (based on your choice of options above) for upto 15 minutes, and if it finds a suitable center then automatically book an appointment for you. If no center is found in the 15 minute duration, the process will time out and you will need to login again and repeat the steps.</li>
+            <li><strong>Manual Booking:</strong> Uncheck the <u>Enable Booking Scheduler</u> checkbox and click <u>Start Tracking</u>. You can then click "Book" on center of your choice shown in the search result table.</li></ul></small></p>
             <div class="form-check mb-3">
               <input class="form-check-input" type="checkbox" value="" id="enableBooking">
               <label class="form-check-label" for="enableBooking">Enable Booking Scheduler</label>
