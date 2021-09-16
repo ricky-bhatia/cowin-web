@@ -388,9 +388,11 @@
         var currCount = 0;
         var newCenter = false;
         
+        let randomString = (Math.random() * (1200 - 200) + 200).toFixed(0);
+        
         var result = await $.ajax({
             type: "GET",
-            url: "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/findByDistrict?district_id=" + filters.dist_id + "&date=" + filters.date,
+            url: "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/findByDistrict?district_id=" + filters.dist_id + "&date=" + filters.date + "?_=" +  randomString,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function (data) {
