@@ -6,7 +6,7 @@
     <meta name="description" content="A clean and simple real-time vaccine tracker and appointment booking scheduler.">
     <meta name="author" content="Ricky Bhatia">
     <meta name="robots" content="index, follow" />
-    <title>CoWIN Vaccine Tracker</title>
+    <title>CoWIN Vaccine Booking</title>
     
     <link rel="apple-touch-icon" sizes="180x180" href="assets/img/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32x32.png">
@@ -68,8 +68,8 @@
     </div>
     <div class="text-center">
       <i class="bi bi-patch-plus-fill" style="font-size: 2rem; color: blue;"></i>
-      <h2>CoWIN Vaccine Tracker</h2>
-      <p class="lead">A clean and simple CoWIN vaccine tracker that shows available vaccine counts in your area. You can also book the appointment directly using the booking scheduler.</p>
+      <h2>CoWIN Vaccine Slot Booking</h2>
+      <p class="lead">A clean and simple CoWIN vaccine tracker, with <strong>advanced filters</strong>, that shows available vaccine counts in your area. You can also <strong>book the appointment</strong> directly using the <strong>booking scheduler</strong>.</p>
       
     </div>
 
@@ -77,7 +77,7 @@
 
       <div class="col-fluid">
         <h4>Tracker</h4>
-        <p><small>Choose the options from below form and click <strong>Start Tracking</strong>. The web page will search for centers every <strong>10</strong> seconds and list the centers with available vaccines.</small></p>
+        <p><small>Choose the options from below form and click <strong>Start Tracking</strong>.</small></p>
         <form class="needs-validation" novalidate>
           <div class="row g-3">
 
@@ -226,7 +226,7 @@
             </div>
             
             <div class="d-grid gap-2 col-12 mx-auto">
-              <button type="button" id="startBookingBtn" class="btn btn-primary" disabled onclick="startBooking()">Start Booking</button>
+              <button type="button" id="startBookingBtn" class="btn btn-primary" disabled onclick="startBooking()">Start Auto Booking</button>
               <button type="button" id="stopBookingBtn" class="btn btn-danger d-none" onclick="stopBooking()">
                 <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"> </span>
                 Stop Booking
