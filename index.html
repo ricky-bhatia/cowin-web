@@ -199,7 +199,7 @@
             <p><small>This section can help you book the vaccination appointment. Follow the below steps for booking the appointment.
             <ul>
             <li>Login here using registered mobile number, select the beneficiaries, and desired options using the above form.</li>
-            <li><strong>Automated Booking:</strong> Check the <u>Enable Booking Scheduler</u> checkbox and click <u>Start Booking</u>. The app will then look for appropriate centers (based on your choice of options above) for upto 15 minutes, and if it finds a suitable center then automatically book an appointment for you. If no center is found in the 15 minute duration, the process will time out and you will need to login again and repeat the steps.</li>
+            <li><strong>Automated Booking:</strong> Check the <u>Enable Booking Scheduler</u> checkbox and click <u>Start Auto Booking</u>. The app will then look for appropriate centers (based on your choice of options above) for upto 15 minutes, and if it finds a suitable center then automatically book an appointment for you. If no center is found in the 15 minute duration, the process will time out and you will need to login again and repeat the steps.</li>
             <li><strong>Manual Booking:</strong> Uncheck the <u>Enable Booking Scheduler</u> checkbox and click <u>Start Tracking</u>. You can then click "Book" on center of your choice shown in the search result table.</li></ul></small></p>
             <div class="form-check mb-3">
               <input class="form-check-input" type="checkbox" value="" id="enableBooking">
@@ -208,12 +208,12 @@
             <div id="sendOTPdiv" class="input-group mb-3">
               <span class="input-group-text">+91</span>
               <input type="number" class="form-control" id="mobileNumber" placeholder="Mobile Number" aria-label="Mobile Number" aria-describedby="button-addon1">
-              <button class="btn btn-outline-secondary" type="button" onclick="sendOTP()" id="button-addon1">Send OTP</button>
+              <button class="btn btn-secondary" type="button" onclick="sendOTP()" id="button-addon1">Send OTP</button>
             </div>
             
             <div id="verifyOTPdiv" class="input-group mb-3 d-none">
               <input type="number" class="form-control" id="otp" placeholder="Enter OTP" aria-label="Enter OTP" aria-describedby="button-addon2">
-              <button class="btn btn-outline-secondary" type="button" onclick="verifyOTP()" id="button-addon2">Verify OTP</button>
+              <button class="btn btn-secondary" type="button" onclick="verifyOTP()" id="button-addon2">Verify OTP</button>
             </div>
             
             <div id="benListdiv" class="mb-3 d-none">
