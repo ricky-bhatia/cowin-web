@@ -506,6 +506,8 @@
         type: "GET",
         url: "https://cdn-api.co-vin.in/api/v2/admin/location/states",
         contentType: "application/json; charset=utf-8",
+        crossDomain: true,
+        headers: {  'Access-Control-Allow-Origin': 'https://www.cowin.gov.in' },
         dataType: "json",
         success: function (data) {
             $("#stateList").append("<option value=''>Choose State...</option>");
